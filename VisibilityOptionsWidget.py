@@ -2,38 +2,36 @@
 
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QLabel, QWidget, QMenu, QColorDialog,
-    QSlider, QCheckBox, QVBoxLayout, QListWidget, QStackedWidget,
-    QDialog, QPushButton, QHBoxLayout, QSplitter,
-    QComboBox, QFontComboBox, QSpinBox, QDialogButtonBox, QGridLayout, QSizePolicy
+    QLabel, QWidget,
+    QCheckBox, QVBoxLayout, 
+    QComboBox, QFontComboBox, QSpinBox, QGridLayout
 )
-from PyQt5.QtCore import Qt, QTimer, QTime, QDate, QSettings, QPoint
-from PyQt5.QtGui import QFont, QColor, QPainter, QBrush, QPen, QKeyEvent
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont
 
-class OpcionesVisibilidadWidget(QWidget):
-    def __init__(self, parent, type=QWidget):
+class VisibilityOptionsWidget(QWidget):
+    def __init__(self, parent,translator, type=QWidget):
         super().__init__()
         self.parent = parent
-        
-        self.main_window= parent.parentWidget()
-        
+        self.translator= translator
+          
         vbox = QVBoxLayout()
         vbox.setContentsMargins(20, 20, 20, 20)
         
         # Checkbox mostrar segundos
-        self.chk_segundos = QCheckBox("Mostrar segundos")
+        self.chk_segundos = QCheckBox(self.translator.tr('display_seconds'))
         self.chk_segundos.setChecked(parent.show_seconds)
         self.chk_segundos.stateChanged.connect(self.toggle_segundos)
         vbox.addWidget(self.chk_segundos)
 
         # Checkbox mostrar fecha
-        self.chk_fecha = QCheckBox("Mostrar fecha")
+        self.chk_fecha = QCheckBox(self.translator.tr('display_date'))
         self.chk_fecha.setChecked(parent.show_date)
         self.chk_fecha.stateChanged.connect(self.toggle_fecha)
         vbox.addWidget(self.chk_fecha)
 
         # Selector de formato de fecha
-        vbox.addWidget(QLabel("Formato de fecha:"))
+        vbox.addWidget(QLabel(self.translator.tr('date_format')))
         self.date_format = QComboBox()
         self.date_format.addItems(["dd/MM/yyyy", "MM/dd/yyyy", "yyyy-MM-dd", "ddd, MMM d"])
         self.date_format.setCurrentText(parent.date_format)
@@ -41,14 +39,14 @@ class OpcionesVisibilidadWidget(QWidget):
         vbox.addWidget(self.date_format)
 
         # Selector de fuente
-        vbox.addWidget(QLabel("Fuente:"))
+        vbox.addWidget(QLabel(self.translator.tr('font_label')))
         self.font_combo = QFontComboBox()
         self.font_combo.setCurrentFont(QFont(parent.font_family, parent.font_size))
         self.font_combo.currentFontChanged.connect(self.cambiar_fuente)
         vbox.addWidget(self.font_combo)
 
         # Tamaño de fuente
-        vbox.addWidget(QLabel("Tamaño de fuente:"))
+        vbox.addWidget(QLabel(self.translator.tr('font_size')))
         self.font_size = QSpinBox()
         self.font_size.setRange(8, 72)
         self.font_size.setValue(parent.font_size)
@@ -56,13 +54,13 @@ class OpcionesVisibilidadWidget(QWidget):
         vbox.addWidget(self.font_size)
 
         # Control de tamaño de ventana
-        vbox.addWidget(QLabel("<b>Tamaño de ventana:</b>"))
+        vbox.addWidget(QLabel(self.translator.tr('window_size')))
         
         grid = QGridLayout()
         vbox.addLayout(grid)
 
         # Ancho
-        grid.addWidget(QLabel("Ancho:"), 0, 0)
+        grid.addWidget(QLabel(self.translator.tr('width_label')), 0, 0)
         self.spin_width = QSpinBox()
         self.spin_width.setRange(100, 1000)
         self.spin_width.setValue(parent.width())
@@ -70,7 +68,7 @@ class OpcionesVisibilidadWidget(QWidget):
         grid.addWidget(self.spin_width, 0, 1)
         
         # Alto
-        grid.addWidget(QLabel("Alto:"), 1, 0)
+        grid.addWidget(QLabel(self.translator.tr('height_label')), 1, 0)
         self.spin_height = QSpinBox()
         self.spin_height.setRange(50, 500)
         self.spin_height.setValue(parent.height())

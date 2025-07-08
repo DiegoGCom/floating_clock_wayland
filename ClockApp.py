@@ -3,23 +3,22 @@
 import sys
 import os
 from PyQt5.QtWidgets import (
-    QApplication, QLabel, QWidget, QMenu, QVBoxLayout, QDialog, QSizePolicy
+     QLabel, QWidget, QMenu, QVBoxLayout, QDialog, QSizePolicy
 )
-from PyQt5.QtCore import Qt, QTimer, QTime, QDate, QSettings, QPoint
+from PyQt5.QtCore import Qt, QTimer, QTime, QDate, QSettings 
 from PyQt5.QtGui import QFont, QColor, QPainter, QBrush, QPen
 
 from ConfigDialog import ConfigDialog
+from Translator import Translator
 
-
-class RelojFlotante(QWidget):
+class ClockApp(QWidget):
     def __init__(self):
         super().__init__()
         self.settings = QSettings("FloatingClock", "Config")
+        self.translator = Translator()
         self._load_settings()
-
-        self.bg_color = QColor(self.settings.value("color_fondo", "#000000", type=str))
-        self.text_color = QColor(self.settings.value("text_color", "#FFFFFF", type=str))
-        self.border_color = QColor(self.settings.value("borde_color", "#FF0000", type=str))
+        
+        self.translator.set_language(self.language)
 
         self.setWindowFlags(
             Qt.FramelessWindowHint |
@@ -43,6 +42,7 @@ class RelojFlotante(QWidget):
 
         self.is_wayland = "wayland" in os.getenv("XDG_SESSION_TYPE", "").lower()
         print(f"Entorno Wayland detectado: {self.is_wayland}")
+        
 
     def _load_settings(self):
         s = self.settings
@@ -61,6 +61,7 @@ class RelojFlotante(QWidget):
         self.window_height = s.value("window_height", 150, type=int)
         self.window_x = s.value("window_x", 200, type=int)
         self.window_y = s.value("window_y", 200, type=int)
+        self.language= s.value("language", "en", type=str)
 
     def _create_widgets(self):
         self.layout = QVBoxLayout(self)
@@ -70,7 +71,7 @@ class RelojFlotante(QWidget):
         self.time_label.setAlignment(Qt.AlignCenter)
         self.time_label.setFixedHeight(90)
         self.time_label.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Fixed)
-        self.time_label.setStyleSheet(f"color: {self.text_color.name()}; background: transparent; ")
+        self.time_label.setStyleSheet(f"color: {self.text_color.name()}; background: transparent; margin:10px 30px 10px 30px")
 
         self.date_label = QLabel(self)
         self.date_label.setAlignment(Qt.AlignCenter)
@@ -96,15 +97,15 @@ class RelojFlotante(QWidget):
     def open_config_menu(self, pos):
         try:
             menu = QMenu(self)
-            menu.addAction("Configuración").triggered.connect(self.abrir_dialog_config)
-            menu.addAction("Salir").triggered.connect(self.close)
+            menu.addAction(self.translator.tr('menu_settings')).triggered.connect(self.abrir_dialog_config)
+            menu.addAction(self.translator.tr('menu_exit')).triggered.connect(self.close)
             menu.exec_(self.mapToGlobal(pos))
         except Exception as e:
             print(f"Error abriendo menú contextual: {e}")
 
     def abrir_dialog_config(self):
         try:
-            dlg = ConfigDialog(self)
+            dlg = ConfigDialog(self,self.translator)
             self.config_dialog = dlg
             if dlg.exec_() == QDialog.Accepted:
                 self._save_settings()
@@ -185,6 +186,7 @@ class RelojFlotante(QWidget):
             s.setValue("window_height", self.window_height)
             s.setValue("window_x", self.window_x)
             s.setValue("window_y", self.window_y)
+            s.setValue("language", self.language)
         except Exception as e:
             print(f"Error guardando configuración: {e}")
 
@@ -199,4 +201,7 @@ class RelojFlotante(QWidget):
     def set_border_thickness(self, thickness): self.border_thickness = thickness; self.update()
     def set_opacity(self, value): self.opacity = max(0.1, min(1.0, value)); self.update()
 
-
+    def change_language(self,language): 
+        self.translator.set_language(language)
+        self.language=language
+        self._save_settings()

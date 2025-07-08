@@ -2,30 +2,30 @@
 
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QLabel, QWidget, QMenu, QColorDialog,
-    QSlider, QCheckBox, QVBoxLayout, QListWidget, QStackedWidget,
-    QDialog, QPushButton, QHBoxLayout, QSplitter,
-    QComboBox, QFontComboBox, QSpinBox, QDialogButtonBox, QGridLayout, QSizePolicy
+     QLabel, QWidget,  QColorDialog,
+    QSlider, QVBoxLayout,  QPushButton
 )
-from PyQt5.QtCore import Qt, QTimer, QTime, QDate, QSettings, QPoint
-from PyQt5.QtGui import QFont, QColor, QPainter, QBrush, QPen, QKeyEvent
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import  QColor
+from Translator import Translator
 
 
-class FondoConfigWidget(QWidget):
-    def __init__(self, parent):
+class BackgroundConfigWidget(QWidget):
+    def __init__(self, parent, translator):
         super().__init__()
         self.parent = parent
-        
+        self.translator= translator
+           
         vbox = QVBoxLayout()
         vbox.setContentsMargins(20, 20, 20, 20)
         
         # Botón para seleccionar color de fondo
-        self.color_btn = QPushButton("Cambiar color de fondo")
+        self.color_btn = QPushButton(self.translator.tr("bg_change_color"))
         self.color_btn.clicked.connect(self.set_background_color)
         vbox.addWidget(self.color_btn)
 
         # Slider para opacidad fondo
-        vbox.addWidget(QLabel("Opacidad del fondo (%)"))
+        vbox.addWidget(QLabel(self.translator.tr("bg_opacity")))
         self.slider_opacity = QSlider(Qt.Horizontal)
         self.slider_opacity.setRange(10, 100)
         self.slider_opacity.setValue(int(parent.opacity * 100))
@@ -33,7 +33,7 @@ class FondoConfigWidget(QWidget):
         vbox.addWidget(self.slider_opacity)
 
         # Botón para color de texto
-        self.text_color_btn = QPushButton("Cambiar color del texto")
+        self.text_color_btn = QPushButton(self.translator.tr("bg_text_color"))
         self.text_color_btn.clicked.connect(self.set_text_color)
         vbox.addWidget(self.text_color_btn)
 

@@ -2,11 +2,11 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication 
-from RelojFlotante import RelojFlotante
+from ClockApp import ClockApp
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    reloj = RelojFlotante()
+    reloj = ClockApp()
     reloj.show()
     app.exec_()

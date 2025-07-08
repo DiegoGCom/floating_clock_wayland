@@ -2,29 +2,28 @@
 
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QLabel, QWidget, QMenu, QColorDialog,
-    QSlider, QCheckBox, QVBoxLayout, QListWidget, QStackedWidget,
-    QDialog, QPushButton, QHBoxLayout, QSplitter,
-    QComboBox, QFontComboBox, QSpinBox, QDialogButtonBox, QGridLayout, QSizePolicy
+    QLabel, QWidget,  QColorDialog,
+    QSlider,  QVBoxLayout, QDialog, QPushButton, 
 )
-from PyQt5.QtCore import Qt, QTimer, QTime, QDate, QSettings, QPoint
-from PyQt5.QtGui import QFont, QColor, QPainter, QBrush, QPen, QKeyEvent
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import  QColor
 
-class BordeConfigWidget(QWidget):
-    def __init__(self, parent):
+class BorderConfigWidget(QWidget):
+    def __init__(self, parent, translator):
         super().__init__()
         self.parent = parent
+        self.translator = translator
         
         vbox = QVBoxLayout()
         vbox.setContentsMargins(20, 20, 20, 20)
         
         # Color del borde
-        self.border_color_btn = QPushButton("Cambiar color del borde")
+        self.border_color_btn = QPushButton(self.translator.tr("border_change_color"))
         self.border_color_btn.clicked.connect(self.set_border_color)
         vbox.addWidget(self.border_color_btn)
 
         # Grosor del borde
-        vbox.addWidget(QLabel("Grosor del borde"))
+        vbox.addWidget(QLabel(self.translator.tr("border_thickness")))
         self.border_slider = QSlider(Qt.Horizontal)
         self.border_slider.setRange(0, 20)
         self.border_slider.setValue(parent.border_thickness)
@@ -32,7 +31,7 @@ class BordeConfigWidget(QWidget):
         vbox.addWidget(self.border_slider)
 
         # Radio del borde
-        vbox.addWidget(QLabel("Radio de bordes"))
+        vbox.addWidget(QLabel(self.translator.tr("border_radius")))
         self.slider_radio = QSlider(Qt.Horizontal)
         self.slider_radio.setRange(0, 50)
         self.slider_radio.setValue(parent.border_radius)
